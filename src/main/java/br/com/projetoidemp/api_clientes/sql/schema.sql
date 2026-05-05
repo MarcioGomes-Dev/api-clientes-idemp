@@ -1,0 +1,6 @@
+CREATE TABLE CLIENTES(
+    ID          SERIAL          PRIMARY KEY,
+    NOME        VARCHAR(150)    NOT NULL,
+    EMAIL       VARCHAR(100)    NOT NULL,
+    TELEFONE    VARCHAR(11)     NOT NULL
+)
