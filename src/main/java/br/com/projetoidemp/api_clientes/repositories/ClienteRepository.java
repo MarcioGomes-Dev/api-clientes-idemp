@@ -3,6 +3,9 @@ package br.com.projetoidemp.api_clientes.repositories;
 import br.com.projetoidemp.api_clientes.entities.Cliente;
 import br.com.projetoidemp.api_clientes.factories.ConnectionFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ClienteRepository {
     public void inserir(Cliente cliente) throws Exception {
 
@@ -25,6 +28,29 @@ public class ClienteRepository {
                 return result.getInt("QTD") == 1;
             }
             return false;
+        }
+    }
+
+    public List<Cliente> listar(String nome) throws Exception {
+        try (var connection = ConnectionFactory.getConnection()){
+            var statement = connection.prepareStatement("SELECT * FROM CLIENTES WHERE NOME ILIKE ? ORDER BY NOME");
+            statement.setString(1,"%" + nome + "%");
+            var result = statement.executeQuery();
+
+            var lista = new ArrayList<Cliente>();
+
+            while(result.next()){
+                var cliente = new Cliente();
+
+                cliente.setId(result.getInt("id"));
+                cliente.setNome(result.getString("nome"));
+                cliente.setEmail(result.getString("email"));
+                cliente.setTelefone(result.getString("telefone"));
+
+                lista.add(cliente);
+            }
+
+            return lista;
         }
     }
 }

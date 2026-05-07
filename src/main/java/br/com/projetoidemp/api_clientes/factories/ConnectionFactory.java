@@ -8,7 +8,7 @@ public class ConnectionFactory {
 
         var host = "jdbc:postgresql://localhost:5432/bd-api-clientes-idemp";
         var user = "postgres";
-        var pass = "2708";
+        var pass = "coti";
 
         return DriverManager.getConnection(host, user, pass);
     }
