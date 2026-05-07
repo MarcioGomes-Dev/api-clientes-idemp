@@ -5,6 +5,7 @@ import br.com.projetoidemp.api_clientes.services.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/cliente")
 public class ClienteController {
