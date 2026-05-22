@@ -1,0 +1,71 @@
+services:
+
+  api-clientes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: apiclientes_app
+    restart: always
+
+    ports:
+      - "8083:8083"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bdapiclientes_idemp
+      SPRING_DATASOURCE_USERNAME: apiclientes_idemp
+      SPRING_DATASOURCE_PASSWORD: coti
+
+    depends_on:
+      - postgres
+
+    networks:
+      - rede_apiclientes
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_apiclientes_idemp
+    restart: always
+
+    environment:
+      POSTGRES_USER: apiclientes_idemp
+      POSTGRES_PASSWORD: coti
+      POSTGRES_DB: bdapiclientes_idemp
+
+    ports:
+      - "5440:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - rede_apiclientes
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_apiclientes
+    restart: always
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+
+    ports:
+      - "8084:80"
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+    depends_on:
+      - postgres
+
+    networks:
+      - rede_apiclientes
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  rede_apiclientes:
+    driver: bridge

@@ -13,7 +13,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
         registry
         .addMapping("/**") //permissão para todos os ENDPOINTS
         .allowedOrigins("http://localhost:4200")  //projeto Angular
-        .allowedMethods("POST", "PUT", "DELETE", "GET")
+        .allowedMethods("POST", "PUT", "DELETE", "GET","OPTIONS")
                 .allowedHeaders("*");
     }
 }
