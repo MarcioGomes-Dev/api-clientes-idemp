@@ -4,7 +4,7 @@ public record ClienteUpdateRequest(
 
         String nome,
         String email,
-        String telefone
+        String telefone,
+        String statusRelatorio
 
-) {
-}
+) {}

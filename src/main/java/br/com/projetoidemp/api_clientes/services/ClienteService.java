@@ -3,7 +3,9 @@ package br.com.projetoidemp.api_clientes.services;
 import br.com.projetoidemp.api_clientes.dtos.ClienteRequest;
 import br.com.projetoidemp.api_clientes.dtos.ClienteResponse;
 import br.com.projetoidemp.api_clientes.dtos.ClienteUpdateRequest;
+import br.com.projetoidemp.api_clientes.dtos.DashboardResponse;
 import br.com.projetoidemp.api_clientes.entities.Cliente;
+import br.com.projetoidemp.api_clientes.enums.StatusRelatorio;
 import br.com.projetoidemp.api_clientes.repositories.ClienteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,7 @@ public class ClienteService {
             );
         }
 
-        if(clienteRepository.existsByEmail(request.email())) {
+        if (clienteRepository.existsByEmail(request.email())) {
 
             throw new IllegalArgumentException(
                     "O Email já está cadastrado. Tente outro."
@@ -51,6 +53,10 @@ public class ClienteService {
         cliente.setEmail(request.email());
         cliente.setTelefone(request.telefone());
 
+        cliente.setStatusRelatorio(
+                StatusRelatorio.NAO_RESPONDIDO
+        );
+
         clienteRepository.save(cliente);
     }
 
@@ -59,10 +65,10 @@ public class ClienteService {
     // =========================================
     public List<ClienteResponse> pesquisarClientes(String nome) {
 
-        if(nome == null || nome.trim().length() < 5) {
+        if (nome == null || nome.trim().length() < 3) {
 
             throw new IllegalArgumentException(
-                    "O nome do cliente para pesquisa deve ter pelo menos 5 caracteres."
+                    "Informe pelo menos 3 caracteres para pesquisa."
             );
         }
 
@@ -74,7 +80,30 @@ public class ClienteService {
                         cliente.getId(),
                         cliente.getNome(),
                         cliente.getEmail(),
-                        cliente.getTelefone()
+                        cliente.getTelefone(),
+                        cliente.getStatusRelatorio() != null
+                                ? cliente.getStatusRelatorio().name()
+                                : "NAO_RESPONDIDO"
+                ))
+                .toList();
+    }
+
+    // =========================================
+    // LISTAR TODOS OS CLIENTES
+    // =========================================
+    public List<ClienteResponse> listarTodosClientes() {
+
+        var lista = clienteRepository.findAll();
+
+        return lista.stream()
+                .map(cliente -> new ClienteResponse(
+                        cliente.getId(),
+                        cliente.getNome(),
+                        cliente.getEmail(),
+                        cliente.getTelefone(),
+                        cliente.getStatusRelatorio() != null
+                                ? cliente.getStatusRelatorio().name()
+                                : "NAO_RESPONDIDO"
                 ))
                 .toList();
     }
@@ -98,6 +127,15 @@ public class ClienteService {
         cliente.setEmail(request.email());
         cliente.setTelefone(request.telefone());
 
+        if (request.statusRelatorio() != null) {
+
+            cliente.setStatusRelatorio(
+                    StatusRelatorio.valueOf(
+                            request.statusRelatorio()
+                    )
+            );
+        }
+
         clienteRepository.save(cliente);
     }
 
@@ -106,7 +144,7 @@ public class ClienteService {
     // =========================================
     public void excluirCliente(Integer id) {
 
-        if(!clienteRepository.existsById(id)) {
+        if (!clienteRepository.existsById(id)) {
 
             throw new IllegalArgumentException(
                     "Cliente não encontrado."
@@ -133,7 +171,56 @@ public class ClienteService {
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getEmail(),
-                cliente.getTelefone()
+                cliente.getTelefone(),
+                cliente.getStatusRelatorio() != null
+                        ? cliente.getStatusRelatorio().name()
+                        : "NAO_RESPONDIDO"
         );
     }
+
+    // =========================================
+    // ALTERAR STATUS
+    // =========================================
+    public void alterarStatus(
+            Integer id,
+            String status) {
+
+        Cliente cliente = clienteRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Cliente não encontrado."
+                        )
+                );
+
+        cliente.setStatusRelatorio(
+                StatusRelatorio.valueOf(status)
+        );
+
+        clienteRepository.save(cliente);
+    }
+    public DashboardResponse obterIndicadores() {
+
+        Long totalClientes =
+                clienteRepository.count();
+
+        Long respondidos =
+                clienteRepository
+                        .countByStatusRelatorio(
+                                StatusRelatorio.RESPONDIDO
+                        );
+
+        Long pendentes =
+                clienteRepository
+                        .countByStatusRelatorio(
+                                StatusRelatorio.NAO_RESPONDIDO
+                        );
+
+        return new DashboardResponse(
+                totalClientes,
+                respondidos,
+                pendentes
+        );
+    }
+
 }

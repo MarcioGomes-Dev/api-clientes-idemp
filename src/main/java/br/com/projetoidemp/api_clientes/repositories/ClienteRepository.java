@@ -2,6 +2,7 @@ package br.com.projetoidemp.api_clientes.repositories;
 
 import br.com.projetoidemp.api_clientes.entities.Cliente;
 
+import br.com.projetoidemp.api_clientes.enums.StatusRelatorio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,11 @@ public interface ClienteRepository
     // LISTAR CLIENTES POR NOME
     // =========================================
     List<Cliente> findByNomeContainingIgnoreCaseOrderByNome(String nome);
+
+    //==========================================
+    //TOTAL DE CLIENTES
+    //==========================================
+    Long countByStatusRelatorio(
+            StatusRelatorio statusRelatorio
+    );
 }

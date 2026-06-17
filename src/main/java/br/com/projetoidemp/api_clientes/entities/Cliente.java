@@ -3,6 +3,9 @@ package br.com.projetoidemp.api_clientes.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import br.com.projetoidemp.api_clientes.enums.StatusRelatorio;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Getter
 @Setter
@@ -22,6 +25,9 @@ public class Cliente {
 
     @Column(name = "telefone")
     private String telefone;
+
+    @Enumerated(EnumType.STRING)
+    private StatusRelatorio statusRelatorio;
 
     // getters e setters
 }

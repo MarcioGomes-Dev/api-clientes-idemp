@@ -26,7 +26,7 @@ public class ClienteController {
     // =========================================
     // CADASTRAR CLIENTE
     // =========================================
-    @PostMapping
+    @PostMapping("/criar")
     public ResponseEntity<String> criar(
             @Valid @RequestBody ClienteRequest request) {
 
@@ -40,11 +40,10 @@ public class ClienteController {
     // =========================================
     // CONSULTAR CLIENTES
     // =========================================
-    @GetMapping
-    public ResponseEntity<List<ClienteResponse>> consultar(
-            @RequestParam String nome) {
+    @GetMapping("/todos")
+    public ResponseEntity<List<ClienteResponse>> listarTodos() {
 
-        var lista = clienteService.pesquisarClientes(nome);
+        var lista = clienteService.listarTodosClientes();
 
         return ResponseEntity.ok(lista);
     }
@@ -52,7 +51,7 @@ public class ClienteController {
     // =========================================
     // OBTER CLIENTE POR ID
     // =========================================
-    @GetMapping("/{id}")
+    @GetMapping("obterPorId/{id}")
     public ResponseEntity<ClienteResponse> obterPorId(
             @PathVariable Integer id) {
 
@@ -64,7 +63,7 @@ public class ClienteController {
     // =========================================
     // ATUALIZAR CLIENTE
     // =========================================
-    @PutMapping("/{id}")
+    @PutMapping("atualizar/{id}")
     public ResponseEntity<String> atualizar(
             @PathVariable Integer id,
             @Valid @RequestBody ClienteUpdateRequest request) {
@@ -79,7 +78,7 @@ public class ClienteController {
     // =========================================
     // EXCLUIR CLIENTE
     // =========================================
-    @DeleteMapping("/{id}")
+    @DeleteMapping("excluir/{id}")
     public ResponseEntity<String> excluir(
             @PathVariable Integer id) {
 
@@ -89,4 +88,24 @@ public class ClienteController {
                 "Cliente excluído com sucesso!"
         );
     }
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> alterarStatus(
+            @PathVariable Integer id,
+            @RequestParam String status) {
+
+        clienteService.alterarStatus(id, status);
+
+        return ResponseEntity.ok(
+                "Status atualizado com sucesso!"
+        );
+    }
+    @GetMapping("/consultar")
+    public ResponseEntity<List<ClienteResponse>> pesquisarPorNome(
+            @RequestParam String nome) {
+
+        var lista = clienteService.pesquisarClientes(nome);
+
+        return ResponseEntity.ok(lista);
+    }
+
 }
